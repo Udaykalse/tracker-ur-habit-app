@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchHabits, type Habit } from "../store/habit-slice";
 import {
   Box,
-  Grid,
   Typography,
   LinearProgress,
   Card,
@@ -35,7 +34,6 @@ const HabitStats: React.FC = () => {
     const getStreak = (habit: Habit) => {
       let streak = 0;
       const currentDate = new Date();
-
       while (true) {
         const dateString = currentDate.toISOString().split("T")[0];
         if (habit.completedDates.includes(dateString)) {
@@ -45,10 +43,8 @@ const HabitStats: React.FC = () => {
           break;
         }
       }
-
       return streak;
     };
-
     return Math.max(...habits.map(getStreak), 0);
   };
 
@@ -61,49 +57,57 @@ const HabitStats: React.FC = () => {
         📊 Habit Statistics
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Card elevation={4} sx={{ backgroundColor: "#f5f5f5" }}>
-            <CardContent>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 3,
+          justifyContent: "space-between",
+        }}
+      >
+        {[{
+          title: "Total Habits",
+          value: getTotalHabits(),
+          icon: <ListAltIcon color="primary" />,
+          bgColor: "#f5f5f5",
+        }, {
+          title: "Completed Today",
+          value: getCompletedToday(),
+          icon: <CheckCircleIcon color="success" />,
+          bgColor: "#e8f5e9",
+        }, {
+          title: "Longest Streak",
+          value: `${getLongestStreak()} days`,
+          icon: <EmojiEventsIcon color="warning" />,
+          bgColor: "#fff3e0",
+        }].map(({ title, value, icon, bgColor }) => (
+          <Card
+            key={title}
+            elevation={4}
+            sx={{
+              backgroundColor: bgColor,
+              flex: "1 1 0",
+              minWidth: 0,
+              // To keep equal width and allow responsiveness
+            }}
+          >
+            <CardContent
+              sx={{
+                textAlign: { xs: "center", sm: "left" },
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <ListAltIcon color="primary" />
-                <Typography variant="subtitle1">Total Habits</Typography>
+                {icon}
+                <Typography variant="subtitle1">{title}</Typography>
               </Box>
-              <Typography variant="h6" sx={{ mt: 1 }}>
-                {getTotalHabits()}
-              </Typography>
+              <Typography variant="h6">{value}</Typography>
             </CardContent>
           </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card elevation={4} sx={{ backgroundColor: "#e8f5e9" }}>
-            <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <CheckCircleIcon color="success" />
-                <Typography variant="subtitle1">Completed Today</Typography>
-              </Box>
-              <Typography variant="h6" sx={{ mt: 1 }}>
-                {getCompletedToday()}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card elevation={4} sx={{ backgroundColor: "#fff3e0" }}>
-            <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <EmojiEventsIcon color="warning" />
-                <Typography variant="subtitle1">Longest Streak</Typography>
-              </Box>
-              <Typography variant="h6" sx={{ mt: 1 }}>
-                {getLongestStreak()} days
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        ))}
+      </Box>
     </Box>
   );
 };

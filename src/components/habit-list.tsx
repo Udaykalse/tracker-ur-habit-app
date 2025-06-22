@@ -39,59 +39,68 @@ const HabitList: React.FC = () => {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 4 }}>
       {habits.map((habit) => (
         <Paper key={habit.id} elevation={3} sx={{ p: 3 }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid >
+          {/* Top Row: Habit Name + Buttons */}
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item xs={12} sm={6}>
               <Typography variant="h6">{habit.name}</Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ textTransform: "capitalize" }}
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "flex-start", sm: "flex-end" },
+                flexWrap: "wrap",
+                gap: 1,
+                mt: { xs: 1, sm: 0 },
+              }}
+            >
+              <Button
+                variant="outlined"
+                color={
+                  habit.completedDates.includes(today) ? "success" : "primary"
+                }
+                onClick={() =>
+                  dispatch(toggleHabit({ id: habit.id, date: today }))
+                }
+                startIcon={<CheckCircleIcon />}
               >
-                {habit.frequency}
-              </Typography>
-            </Grid>
-
-            <Grid >
-              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-                <Button
-                  variant="outlined"
-                  color={
-                    habit.completedDates.includes(today)
-                      ? "success"
-                      : "primary"
-                  }
-                  onClick={() =>
-                    dispatch(toggleHabit({ id: habit.id, date: today }))
-                  }
-                  startIcon={<CheckCircleIcon />}
-                >
-                  {habit.completedDates.includes(today)
-                    ? "Completed"
-                    : "Mark Complete"}
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => dispatch(removeHabit(habit.id))}
-                  startIcon={<DeleteIcon />}
-                >
-                  Remove
-                </Button>
-              </Box>
-            </Grid>
-
-            <Grid>
-              <Typography variant="body2">
-                Current Streak: {getStreak(habit)} days
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={(getStreak(habit) / 30) * 100}
-                sx={{ mt: 1 }}
-              />
+                {habit.completedDates.includes(today)
+                  ? "Completed"
+                  : "Mark Complete"}
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => dispatch(removeHabit(habit.id))}
+                startIcon={<DeleteIcon />}
+              >
+                Delete
+              </Button>
             </Grid>
           </Grid>
+
+          {/* Frequency Line */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ textTransform: "capitalize", mt: 1 }}
+          >
+            Frequency: {habit.frequency}
+          </Typography>
+
+          <Box sx={{ borderBottom: "1px solid #ccc", my: 2 }} />
+
+          {/* Streak Section */}
+          <Typography variant="body2">
+            Streak: {getStreak(habit)} days
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={(getStreak(habit) / 30) * 100}
+            sx={{ mt: 1 }}
+          />
         </Paper>
       ))}
     </Box>

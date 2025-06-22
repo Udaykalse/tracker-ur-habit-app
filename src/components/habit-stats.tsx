@@ -2,29 +2,35 @@ import React, { useEffect } from "react";
 import type { AppDispatch, Rootstate } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHabits, type Habit } from "../store/habit-slice";
-import { Box, LinearProgress, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  LinearProgress,
+  Card,
+  CardContent,
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 
-const habitStats: React.FC = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+const HabitStats: React.FC = () => {
   const { habits, isLoading, error } = useSelector(
     (state: Rootstate) => state.habits
   );
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch<AppDispatch>();
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     dispatch(fetchHabits());
   }, [dispatch]);
 
+  const today = new Date().toISOString().split("T")[0];
+
   const getTotalHabits = () => habits.length;
 
-  const getCompletedToday = () => {
-    const today = new Date().toISOString().split("T")[0];
-    return habits.filter((habit) => habit.completedDates.includes(today))
-      .length;
-  };
+  const getCompletedToday = () =>
+    habits.filter((habit) => habit.completedDates.includes(today)).length;
 
   const getLongestStreak = () => {
     const getStreak = (habit: Habit) => {
@@ -43,37 +49,64 @@ const habitStats: React.FC = () => {
 
       return streak;
     };
-    
 
     return Math.max(...habits.map(getStreak), 0);
   };
 
-  if (isLoading) {
-    return <LinearProgress />;
-  }
-
-  if (error) {
-    return <Typography color="error">{error}</Typography>;
-  }
+  if (isLoading) return <LinearProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <Paper elevation={2} sx={{ p: 2, mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
-        Habit Statistics
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        📊 Habit Statistics
       </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="body1">
-          Total Habits: {getTotalHabits()}
-        </Typography>
-        <Typography variant="body1">
-          Completed Today: {getCompletedToday()}
-        </Typography>
-        <Typography variant="body1">
-          Longest Streak: {getLongestStreak()} days
-        </Typography>
-      </Box>
-    </Paper>
+
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={4}>
+          <Card elevation={4} sx={{ backgroundColor: "#f5f5f5" }}>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <ListAltIcon color="primary" />
+                <Typography variant="subtitle1">Total Habits</Typography>
+              </Box>
+              <Typography variant="h6" sx={{ mt: 1 }}>
+                {getTotalHabits()}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+          <Card elevation={4} sx={{ backgroundColor: "#e8f5e9" }}>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CheckCircleIcon color="success" />
+                <Typography variant="subtitle1">Completed Today</Typography>
+              </Box>
+              <Typography variant="h6" sx={{ mt: 1 }}>
+                {getCompletedToday()}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+          <Card elevation={4} sx={{ backgroundColor: "#fff3e0" }}>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <EmojiEventsIcon color="warning" />
+                <Typography variant="subtitle1">Longest Streak</Typography>
+              </Box>
+              <Typography variant="h6" sx={{ mt: 1 }}>
+                {getLongestStreak()} days
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
-export default habitStats;
+export default HabitStats;

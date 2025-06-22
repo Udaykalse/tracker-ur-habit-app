@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Grid,
   LinearProgress,
   Paper,
   Typography,
@@ -40,20 +39,28 @@ const HabitList: React.FC = () => {
       {habits.map((habit) => (
         <Paper key={habit.id} elevation={3} sx={{ p: 3 }}>
           {/* Top Row: Habit Name + Buttons */}
-          <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item xs={12} sm={6}>
-              <Typography variant="h6">{habit.name}</Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            {/* Habit name */}
+            <Typography variant="h6" sx={{ flex: 1 }}>
+              {habit.name}
+            </Typography>
+
+            {/* Buttons */}
+            <Box
               sx={{
                 display: "flex",
+                gap: 1,
                 justifyContent: { xs: "flex-start", sm: "flex-end" },
                 flexWrap: "wrap",
-                gap: 1,
-                mt: { xs: 1, sm: 0 },
+                flex: 1,
               }}
             >
               <Button
@@ -78,8 +85,8 @@ const HabitList: React.FC = () => {
               >
                 Delete
               </Button>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
 
           {/* Frequency Line */}
           <Typography
@@ -93,9 +100,7 @@ const HabitList: React.FC = () => {
           <Box sx={{ borderBottom: "1px solid #ccc", my: 2 }} />
 
           {/* Streak Section */}
-          <Typography variant="body2">
-            Streak: {getStreak(habit)} days
-          </Typography>
+          <Typography variant="body2">Streak: {getStreak(habit)} days</Typography>
           <LinearProgress
             variant="determinate"
             value={(getStreak(habit) / 30) * 100}

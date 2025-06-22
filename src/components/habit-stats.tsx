@@ -5,7 +5,6 @@ import { fetchHabits, type Habit } from "../store/habit-slice";
 import {
   Box,
   Grid,
-  Paper,
   Typography,
   LinearProgress,
   Card,
